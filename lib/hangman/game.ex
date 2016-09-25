@@ -107,7 +107,7 @@ Here's this module being exercised from an iex session:
 
     iex(13)> { game, state, guess } = G.make_move(game, "b")
     . . .
-    iex(14)> state                                          
+    iex(14)> state
     :bad_guess
 
     iex(15)> { game, state, guess } = G.make_move(game, "f")
@@ -142,6 +142,11 @@ Here's this module being exercised from an iex session:
 
   @spec new_game :: state
   def new_game do
+    %{
+        word:   Hangman.Dictionary.random_word,
+        guessed:    MapSet.new,
+        turns_left: 10
+    }
   end
 
 
@@ -152,6 +157,11 @@ Here's this module being exercised from an iex session:
   """
   @spec new_game(binary) :: state
   def new_game(word) do
+  %{
+      word:   word,
+      guessed:    MapSet.new,
+      turns_left: 10
+  }
   end
 
 
@@ -187,6 +197,7 @@ Here's this module being exercised from an iex session:
   """
   @spec word_length(state) :: integer
   def word_length(%{ word: word }) do
+    String.length(word)
   end
 
   @doc """
@@ -199,6 +210,7 @@ Here's this module being exercised from an iex session:
 
   @spec letters_used_so_far(state) :: [ binary ]
   def letters_used_so_far(state) do
+    MapSet.to_list(state.guessed)
   end
 
   @doc """
@@ -211,6 +223,7 @@ Here's this module being exercised from an iex session:
 
   @spec turns_left(state) :: integer
   def turns_left(state) do
+    state.turns_left
   end
 
   @doc """
