@@ -187,6 +187,7 @@ Here's this module being exercised from an iex session:
 
   @spec make_move(state, ch) :: { state, atom, optional_ch }
   def make_move(state, guess) do
+
   end
 
 
@@ -253,5 +254,44 @@ Here's this module being exercised from an iex session:
   ###########################
 
   # Your private functions go here
+
+  def good_guess(state, guess) do
+
+    letters_in_word = State.codepoints(state.word)
+
+    if Enum.all?(letters_in_word, contains(letters_in_word, state.guessed))) do
+
+      {state, :won, nil}
+
+    else
+
+      {state, :good_guess, guess}
+
+    end
+
+  end
+
+  def bad_guess(state, guess) do
+
+      new_state = %{state | turns_left: state.turns_left - 1}
+
+      if new_state.turns_left == 0 do
+
+        {new_state, :lost, nil}
+
+      else
+
+        {new_state, :bad_guess, guess}
+
+      end
+
+  end
+
+
+  def contains(elem, container) do
+
+    Enum.member?(container, elem)
+    
+  end
 
  end
