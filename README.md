@@ -2,6 +2,10 @@
 
 **TODO: Add description**
 
+Ashley Isles
+ID: 38964553
+Hangman Assignment
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
@@ -21,4 +25,3 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
       [applications: [:hangman]]
     end
     ```
-
