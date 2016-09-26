@@ -241,9 +241,9 @@ Here's this module being exercised from an iex session:
         String.codepoints(state.word) |> Enum.join(" ")
     else
         if Enum.member?(state.guessed, String.codepoints(state.word)) do
-            String.codepoints(state.word)
+            Enum.join(" ", String.codepoints(state.word))
         else
-            " "
+            Enum.join(" ", "_")
         end
     end
   end
