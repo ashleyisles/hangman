@@ -142,7 +142,7 @@ Here's this module being exercised from an iex session:
 
   @spec new_game :: state
   def new_game do
-  
+
     %{
         word:   Hangman.Dictionary.random_word,
         guessed:    MapSet.new,
@@ -191,6 +191,20 @@ Here's this module being exercised from an iex session:
 
   @spec make_move(state, ch) :: { state, atom, optional_ch }
   def make_move(state, guess) do
+
+    new_state = %{state | guessed: MapSet.put(state.guessed, guess)}
+
+    letters_in_word = state.word |> String.codepoints
+
+    if letters_in_word |> Enum.member?(guess) do
+
+       good_guess(new_state, guess)
+
+    else
+
+       bad_guess(new_state, guess)
+
+    end
 
   end
 
@@ -251,19 +265,15 @@ Here's this module being exercised from an iex session:
 
     if reveal do
 
-        String.codepoints(state.word) |> Enum.join(" ")
+        state.word |> String.codepoints |> Enum.join(" ")
 
     else
 
-        if Enum.member?(state.guessed, String.codepoints(state.word)) do
+    #I tried doing this and it didn't work, I think I know why but I'll leave it so you can take a look at it.
+    #helper(state)
 
-            Enum.join(" ", String.codepoints(state.word))
-
-        else
-
-            Enum.join(" ", "_")
-
-        end
+    #Regex to replace the correct guesses with letters, leave the rest as blank, join with spaces
+    String.replace(state.word, ~r/[^#{Enum.join(state.guessed)} ]/, "_") |> String.codepoints |> Enum.join(" ")
 
     end
 
@@ -275,13 +285,13 @@ Here's this module being exercised from an iex session:
 
   # Your private functions go here
 
-  def good_guess(state, guess) do
+  defp good_guess(state, guess) do
 
     #Get each individual letter in the word
-    letters_in_word = State.codepoints(state.word)
+    letters_in_word = state.word |> String.codepoints
 
     #If each letter guessed in contained in the word, you win. If not, good guess
-    if Enum.all?(letters_in_word, contains(letters_in_word, state.guessed))) do
+    if Enum.all?(letters_in_word, fn x -> Enum.member?(state.guessed, x) end) do
 
       {state, :won, nil}
 
@@ -293,30 +303,32 @@ Here's this module being exercised from an iex session:
 
   end
 
-  def bad_guess(state, guess) do
+  defp bad_guess(state, guess) do
 
       #Update state to reflect a lost turn
-      new_state = %{state | turns_left: state.turns_left - 1}
+      state = %{state | turns_left: state.turns_left - 1}
 
       #If there are no turns left, you lose. If there are turns left, bad guess
-      if new_state.turns_left == 0 do
+      if state.turns_left == 0 do
 
-        {new_state, :lost, nil}
+        {state, :lost, nil}
 
       else
 
-        {new_state, :bad_guess, guess}
+        {state, :bad_guess, guess}
 
       end
 
+
   end
 
-
-  def contains(elem, container) do
-
-    #Function to check if an element is contained in another element
-    Enum.member?(container, elem)
-
+  defp helper(state) do
+    letters_in_word = state.word |> String.codepoints
+    if Enum.member?(state.guessed, letters_in_word) do
+        Enum.join(" ", letters_in_word)
+    else
+        Enum.join(" ", "_")
+    end
   end
 
  end
