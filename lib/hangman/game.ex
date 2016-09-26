@@ -142,11 +142,13 @@ Here's this module being exercised from an iex session:
 
   @spec new_game :: state
   def new_game do
+  
     %{
         word:   Hangman.Dictionary.random_word,
         guessed:    MapSet.new,
         turns_left: 10
     }
+
   end
 
 
@@ -157,11 +159,13 @@ Here's this module being exercised from an iex session:
   """
   @spec new_game(binary) :: state
   def new_game(word) do
+
   %{
       word:   word,
       guessed:    MapSet.new,
       turns_left: 10
   }
+
   end
 
 
@@ -198,7 +202,9 @@ Here's this module being exercised from an iex session:
   """
   @spec word_length(state) :: integer
   def word_length(%{ word: word }) do
+
     String.length(word)
+
   end
 
   @doc """
@@ -211,7 +217,9 @@ Here's this module being exercised from an iex session:
 
   @spec letters_used_so_far(state) :: [ binary ]
   def letters_used_so_far(state) do
+
     MapSet.to_list(state.guessed)
+
   end
 
   @doc """
@@ -224,7 +232,9 @@ Here's this module being exercised from an iex session:
 
   @spec turns_left(state) :: integer
   def turns_left(state) do
+
     state.turns_left
+
   end
 
   @doc """
@@ -238,15 +248,25 @@ Here's this module being exercised from an iex session:
 
   @spec word_as_string(state, boolean) :: binary
   def word_as_string(state, reveal \\ false) do
+
     if reveal do
+
         String.codepoints(state.word) |> Enum.join(" ")
+
     else
+
         if Enum.member?(state.guessed, String.codepoints(state.word)) do
+
             Enum.join(" ", String.codepoints(state.word))
+
         else
+
             Enum.join(" ", "_")
+
         end
+
     end
+
   end
 
   ###########################
@@ -257,8 +277,10 @@ Here's this module being exercised from an iex session:
 
   def good_guess(state, guess) do
 
+    #Get each individual letter in the word
     letters_in_word = State.codepoints(state.word)
 
+    #If each letter guessed in contained in the word, you win. If not, good guess
     if Enum.all?(letters_in_word, contains(letters_in_word, state.guessed))) do
 
       {state, :won, nil}
@@ -273,8 +295,10 @@ Here's this module being exercised from an iex session:
 
   def bad_guess(state, guess) do
 
+      #Update state to reflect a lost turn
       new_state = %{state | turns_left: state.turns_left - 1}
 
+      #If there are no turns left, you lose. If there are turns left, bad guess
       if new_state.turns_left == 0 do
 
         {new_state, :lost, nil}
@@ -290,8 +314,9 @@ Here's this module being exercised from an iex session:
 
   def contains(elem, container) do
 
+    #Function to check if an element is contained in another element
     Enum.member?(container, elem)
-    
+
   end
 
  end
