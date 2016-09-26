@@ -237,6 +237,15 @@ Here's this module being exercised from an iex session:
 
   @spec word_as_string(state, boolean) :: binary
   def word_as_string(state, reveal \\ false) do
+    if reveal do
+        String.codepoints(state.word) |> Enum.join(" ")
+    else
+        if Enum.member?(state.guessed, String.codepoints(state.word)) do
+            String.codepoints(state.word)
+        else
+            " "
+        end
+    end
   end
 
   ###########################
